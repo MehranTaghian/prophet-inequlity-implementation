@@ -1,32 +1,12 @@
-import numpy as np
 import torch as tor
 import matplotlib.pyplot as plt
-from scipy.stats import norm, truncnorm
 from tqdm import tqdm
+from utils import *
 
 tor.manual_seed(0)
 
 
 # TODO: normalize input distributions
-
-def get_dists(n):
-    dists = []
-    for _ in range(n):
-        mean = np.random.rand() * 10
-        std = np.random.rand() * 1
-        complete_dist = norm(mean, std)
-        interval = sorted([complete_dist.rvs(), complete_dist.rvs()])
-        truncated_dist = truncnorm(interval[0], interval[1], loc=mean, scale=std)
-        dists.append(truncated_dist)
-    return dists
-
-
-def get_x_i(dists):
-    x_i = []
-    for d in dists:
-        x_i.extend(d.rvs(1))
-    return x_i
-
 
 na = 20
 r = get_dists(na)
