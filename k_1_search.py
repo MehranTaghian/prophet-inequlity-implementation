@@ -37,6 +37,8 @@ def lambda_threshold_alg(x_i, dists):
         if x >= lam:
             return x
 
+    return x_i[-1]
+
 
 def eta_threshold_alg(x_i, dists):
     # find the median of the distribution of max(x_i) as eta
@@ -46,13 +48,15 @@ def eta_threshold_alg(x_i, dists):
         if x >= eta:
             return x
 
+    return x_i[-1]
+
 
 def experiment_single_k(seeds=10):
     seed_lambda = []
     seed_eta = []
     for s in range(seeds):
         np.random.seed(s)
-        dists = get_dists(n)
+        dists = get_dists(n, mean_interval=mean_interval, std_interval=std_interval)
         performance_lambda = []
         performance_eta = []
         results_lambda = []
@@ -60,14 +64,9 @@ def experiment_single_k(seeds=10):
         results_prophet = []
         for _ in tqdm(range(num_samples)):
             x_i = get_x_i(dists)
-            prophet_result = prophet(x_i, k)
-            lam_result = lambda_threshold_alg(x_i, dists)
-            eta_result = eta_threshold_alg(x_i, dists)
-            if lam_result is not None:
-                results_lambda.append(lam_result)
-            if eta_result is not None:
-                results_eta.append(eta_result)
-            results_prophet.append(prophet_result)
+            results_lambda.append(lambda_threshold_alg(x_i, dists))
+            results_eta.append(eta_threshold_alg(x_i, dists))
+            results_prophet.append(prophet(x_i, k))
             prophet_performance = np.mean(results_prophet)
             performance_lambda.append(np.mean(results_lambda) / prophet_performance)
             performance_eta.append(np.mean(results_eta) / prophet_performance)
@@ -83,4 +82,6 @@ if __name__ == "__main__":
     k = 1
     num_samples = 1000
     num_seeds = 10
+    mean_interval = 10
+    std_interval = 1
     experiment_single_k(seeds=num_seeds)

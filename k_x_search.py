@@ -86,10 +86,10 @@ def multiple_k(x_i, k, m):
     return np.sum(results)
 
 
-def experiment_multiple_k(seeds=10):
+def experiment_multiple_k(k, seeds=10):
     seed_results = []
     for s in range(seeds):
-        dists = get_dists(n)
+        dists = get_dists(n, mean_interval=mean_interval, std_interval=std_interval)
         np.random.seed(s)
         results_algo = []
         results_prophet = []
@@ -101,11 +101,8 @@ def experiment_multiple_k(seeds=10):
         m = find_threshold(dists, lr, k, max_mean)
         for _ in tqdm(range(num_samples)):
             x_i = get_x_i(dists)
-            prophet_result = prophet(x_i, k)
-            algo_result = multiple_k(x_i, k, m)
-            results_prophet.append(prophet_result)
-            if algo_result is not None:
-                results_algo.append(algo_result)
+            results_prophet.append(prophet(x_i, k))
+            results_algo.append(multiple_k(x_i, k, m))
             seed_result.append(np.mean(results_algo) / np.mean(results_prophet))
 
         seed_results.append(seed_result)
@@ -120,8 +117,11 @@ def experiment_multiple_k(seeds=10):
 
 if __name__ == "__main__":
     n = 64
-    k = 16
+    ks = [2, 8, 16]
     lr = 0.001
     seeds = 10
     num_samples = 1000
-    experiment_multiple_k(seeds)
+    mean_interval = 10
+    std_interval = 1
+    for k in ks:
+        experiment_multiple_k(k, seeds)

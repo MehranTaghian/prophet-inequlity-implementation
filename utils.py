@@ -2,6 +2,7 @@ import numpy as np
 from scipy.stats import norm, truncnorm
 import heapq
 
+
 def get_dists(n, mean_interval=10, std_interval=1):
     dists = []
     for _ in range(n):
@@ -17,7 +18,7 @@ def get_dists(n, mean_interval=10, std_interval=1):
 def get_x_i(dists):
     x_i = []
     for d in dists:
-        x_i.extend(d.rvs(1))
+        x_i.append(d.rvs())
     return x_i
 
 
